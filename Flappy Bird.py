@@ -28,7 +28,7 @@ font = pygame.font.SysFont("Verdana", 60)
 font_small = pygame.font.SysFont("Verdana", 20)
 game_over = font.render('Game Over', True, BLACK)
 
-background = pygame.image.load("Background.png")
+background = pygame.image.load("Visuals/Background.png")
 
 # Create a white screen
 DISPLAYSURF = pygame.display.set_mode((360, 640))
@@ -39,7 +39,7 @@ pygame.display.set_caption("Flappy Bird")
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Enemy.png")
+        self.image = pygame.image.load("Visuals/Enemy.png")
         self.rect = self.image.get_rect()
         x = random.randint(-30, 200)
         y = random.randint(SCREEN_HEIGHT - 200, SCREEN_HEIGHT + 30)
@@ -61,7 +61,7 @@ class Enemy(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Player.png")
+        self.image = pygame.image.load("Visuals/Player.png")
         self.rect = self.image.get_rect()
         self.rect.center = (100, 300)
         self.fall()
@@ -119,7 +119,7 @@ while True:
     # To be run if collision occurs between Player and Enemy
     if pygame.sprite.spritecollideany(P1, enemies) or P1.rect.top < 0 or P1.rect.bottom > SCREEN_HEIGHT-1:
         pygame.display.update()
-        pygame.mixer.Sound('crash.wav').play()
+        pygame.mixer.Sound('Sounds/crash.wav').play()
         time.sleep(0.5)
         score = font_small.render("Score: " + str(SCORE), True, BLACK)
         DISPLAYSURF.fill(RED)
