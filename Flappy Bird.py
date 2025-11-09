@@ -35,33 +35,42 @@ DISPLAYSURF = pygame.display.set_mode((360, 640))
 DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Flappy Bird")
 
+# Load and play background music
+pygame.mixer.music.load('Sounds/background.wav')
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.5)
+
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Visuals/Enemy.png")
+        self.original_image = pygame.image.load("Visuals/Enemy.png").convert_alpha()
+        self.image = self.original_image
         self.rect = self.image.get_rect()
-        x = random.randint(-30, 200)
-        y = random.randint(SCREEN_HEIGHT - 200, SCREEN_HEIGHT + 30)
-        a = random.choice([x, y])
-        self.rect.center = (SCREEN_WIDTH, a)
+        self.reset_position()
+
+    def reset_position(self):
+        if random.choice([True, False]):
+            self.image = pygame.transform.flip(self.original_image, False, True)
+            self.rect.bottom = random.randint(100, 400)  # variable gap height
+        else:
+            self.image = self.original_image
+            self.rect.top = random.randint(SCREEN_HEIGHT - 400, SCREEN_HEIGHT - 100)
+
+        self.rect.centerx = SCREEN_WIDTH
 
     def move(self):
         global SCORE
         self.rect.move_ip(-SPEED, 0)
-        if (self.rect.right < 0):
+        if self.rect.right < 0:
             SCORE += 1
-            self.rect.top = 0
-            x = random.randint(-30, 200)
-            y = random.randint(SCREEN_HEIGHT - 200, SCREEN_HEIGHT + 30)
-            a = random.choice([x, y])
-            self.rect.center = (SCREEN_WIDTH, a)
-            self.move()
+            self.reset_position()
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Visuals/Player.png")
+        self.image = pygame.image.load("Visuals/Player.png").convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.center = (100, 300)
         self.fall()
@@ -119,6 +128,7 @@ while True:
     # To be run if collision occurs between Player and Enemy
     if pygame.sprite.spritecollideany(P1, enemies) or P1.rect.top < 0 or P1.rect.bottom > SCREEN_HEIGHT-1:
         pygame.display.update()
+        pygame.mixer.music.stop()
         pygame.mixer.Sound('Sounds/crash.wav').play()
         time.sleep(0.5)
         score = font_small.render("Score: " + str(SCORE), True, BLACK)
